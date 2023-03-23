@@ -1,0 +1,17 @@
+<root>
+  <a-string>value1</a-string>
+  <a-string-cdata><![CDATA[
+  some value
+
+  with
+
+  lines
+]]></a-string-cdata>
+  <a-number>1234</a-number>
+  <a-boolean>true</a-boolean>
+  <a-null/>
+  <a-nested-object>
+    <nested>true</nested>
+  </a-nested-object>
+  <!-- there is not really a list notion in XML, we could fake it with a wrapper but it would rarely work in practise -->
+</root>

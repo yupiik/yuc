@@ -1,0 +1,8 @@
+{
+  "a-string": "value1",
+  "a-number": 1234,
+  "a-boolean": true,
+  "a-null": null,
+  "a-nested-object": {"nested": true},
+  "a-list": ["s1"]
+}
