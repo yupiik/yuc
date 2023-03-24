@@ -14,6 +14,53 @@ class DefaultCommandTest {
         assertEquals("value1", stdout.content());
     }
 
+    @FusionCLITest(args = {
+            "default", "--input", "src/test/resources/some.json",
+            "--appendEol", "false",
+            "--outputType", "HANDLEBAR", "--handlebar", "{{json a-string}}"})
+    void handlebarsJsonHelper(final Stdout stdout) {
+        assertEquals("\"value1\"", stdout.content());
+    }
+
+    @FusionCLITest(args = {
+            "default", "--input", "src/test/resources/some.json",
+            "--appendEol", "false",
+            "--outputType", "HANDLEBAR", "--handlebar", "{{json .}}"})
+    void handlebarsJsonHelperObj(final Stdout stdout) {
+        assertEquals("{\"a-string\":\"value1\",\"a-number\":1234,\"a-boolean\":true,\"a-null\":null,\"a-nested-object\":{\"nested\":true},\"a-list\":[\"s1\"]}", stdout.content());
+    }
+
+    @FusionCLITest(args = {
+            "default", "--input", "src/test/resources/some.json",
+            "--appendEol", "false",
+            "--outputType", "HANDLEBAR", "--handlebar", "{{jsonPretty this}}"})
+    void handlebarsJsonPrettyHelperObj(final Stdout stdout) {
+        assertEquals("""
+                {
+                  "a-string": "value1",
+                  "a-number": 1234,
+                  "a-boolean": true,
+                  "a-null": null,
+                  "a-nested-object": {
+                    "nested": true
+                  },
+                  "a-list": [
+                    "s1"
+                  ]
+                }""", stdout.content());
+    }
+
+    @FusionCLITest(args = {
+            "default", "--input", "src/test/resources/some.json",
+            "--appendEol", "false",
+            "--outputType", "HANDLEBAR", "--handlebar", "{{jsonPretty a-nested-object}}"})
+    void handlebarsJsonPrettyFilterObj(final Stdout stdout) {
+        assertEquals("""
+                {
+                  "nested": true
+                }""", stdout.content());
+    }
+
     @FusionCLITest(args = {"default", "--input", "src/test/resources/some.json", "--colored", "true", "--outputType", "INLINE"})
     void colored(final Stdout stdout) {
         assertEquals("" +

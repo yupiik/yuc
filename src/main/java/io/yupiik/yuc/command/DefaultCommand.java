@@ -37,7 +37,7 @@ public class DefaultCommand implements Runnable {
         final var input = io.openInput(charset, conf.input());
         try (final var parser = new JsonParser(input, conf.bufferProviderSize(), new BufferProvider(conf.bufferProviderSize()), true);
              final var writer = io.openOutput(charset, conf.output())) {
-            final var visitor = newVisitor(writer);
+            final var visitor = newVisitor(writer, charset);
             while (parser.hasNext()) {
                 switch (parser.next()) {
                     case START_ARRAY -> visitor.onStartArray();
@@ -61,10 +61,10 @@ public class DefaultCommand implements Runnable {
         }
     }
 
-    private JsonVisitor newVisitor(final Writer writer) {
+    private JsonVisitor newVisitor(final Writer writer, final Charset charset) {
         final var output = new SimpleWriter(writer);
         return switch (conf.outputType()) {
-            case HANDLEBAR -> new HandlebarFormatter(output, conf.handlebar(), jsonMapper);
+            case HANDLEBAR -> new HandlebarFormatter(output, conf.handlebar(), jsonMapper, charset);
             case PRETTY -> new PrettyFormatter(output, getColorScheme());
             default -> new DefaultFormatter(output, getColorScheme());
         };
