@@ -15,7 +15,7 @@ public interface JsonVisitor {
 
     void onBoolean(boolean value);
 
-    void onNumber(Number value);
+    void onNumber(String value);
 
     void onNull();
 

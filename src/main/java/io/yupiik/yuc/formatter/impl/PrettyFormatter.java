@@ -62,7 +62,7 @@ public class PrettyFormatter extends DefaultFormatter {
     }
 
     @Override
-    public void onNumber(final Number value) {
+    public void onNumber(final String value) {
         beforeValue();
         super.onNumber(value);
     }

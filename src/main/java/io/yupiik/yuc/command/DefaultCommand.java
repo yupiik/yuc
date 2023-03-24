@@ -48,7 +48,7 @@ public class DefaultCommand implements Runnable {
                     case VALUE_STRING -> visitor.onString(parser.getString());
                     case VALUE_TRUE -> visitor.onBoolean(true);
                     case VALUE_FALSE -> visitor.onBoolean(false);
-                    case VALUE_NUMBER -> visitor.onNumber(parser.getBigDecimal());
+                    case VALUE_NUMBER -> visitor.onNumber(parser.getString());
                     case VALUE_NULL -> visitor.onNull();
                 }
             }

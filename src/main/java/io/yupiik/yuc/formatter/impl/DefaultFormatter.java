@@ -54,8 +54,8 @@ public class DefaultFormatter implements JsonVisitor {
         return value ? color.onTrue() : color.onFalse();
     }
 
-    protected String numberValue(final Number value) {
-        return color.onNumber(String.valueOf(value));
+    protected String numberValue(final String value) {
+        return color.onNumber(value);
     }
 
     protected String nullValue() {
@@ -109,7 +109,7 @@ public class DefaultFormatter implements JsonVisitor {
     }
 
     @Override
-    public void onNumber(final Number value) {
+    public void onNumber(final String value) {
         output.write(numberValue(value));
         updateStateAfterValueIfNeeded();
     }
