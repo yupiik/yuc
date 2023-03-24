@@ -64,7 +64,7 @@ public class DefaultCommand implements Runnable {
     private JsonVisitor newVisitor(final Writer writer, final Charset charset) {
         final var output = new SimpleWriter(writer);
         return switch (conf.outputType()) {
-            case HANDLEBAR -> new HandlebarFormatter(output, conf.handlebar(), jsonMapper, charset);
+            case HANDLEBARS -> new HandlebarFormatter(output, conf.handlebars(), jsonMapper, charset);
             case PRETTY -> new PrettyFormatter(output, getColorScheme());
             default -> new DefaultFormatter(output, getColorScheme());
         };
@@ -86,12 +86,12 @@ public class DefaultCommand implements Runnable {
     public enum OutputType {
         INLINE,
         PRETTY,
-        HANDLEBAR
+        HANDLEBARS
     }
 
     @RootConfiguration("-")
     public record Conf(
-            @Property(defaultValue = "\"{{this}}\"", documentation = "If `true` output is colorized.") String handlebar,
+            @Property(defaultValue = "\"{{this}}\"", documentation = "If `true` output is colorized.") String handlebars,
             @Property(defaultValue = "io.yupiik.yuc.command.configuration.ColorScheme.DEFAULT", documentation = "If `true` output is colorized.") ColorScheme colorScheme,
             @Property(defaultValue = "null", documentation = "If `true` output is colorized.") Boolean colored,
             @Property(defaultValue = "true", documentation = "If `true` an EOL is appended to the output stream.") boolean appendEol,

@@ -9,7 +9,7 @@ class DefaultCommandTest {
     @FusionCLITest(args = {
             "default", "--input", "src/test/resources/some.json",
             "--appendEol", "false",
-            "--outputType", "HANDLEBAR", "--handlebar", "{{a-string}}"})
+            "--outputType", "HANDLEBARS", "--handlebars", "{{a-string}}"})
     void handlebars(final Stdout stdout) {
         assertEquals("value1", stdout.content());
     }
@@ -17,7 +17,7 @@ class DefaultCommandTest {
     @FusionCLITest(args = {
             "default", "--input", "src/test/resources/some.json",
             "--appendEol", "false",
-            "--outputType", "HANDLEBAR", "--handlebar", "{{json a-string}}"})
+            "--outputType", "HANDLEBARS", "--handlebars", "{{json a-string}}"})
     void handlebarsJsonHelper(final Stdout stdout) {
         assertEquals("\"value1\"", stdout.content());
     }
@@ -25,7 +25,7 @@ class DefaultCommandTest {
     @FusionCLITest(args = {
             "default", "--input", "src/test/resources/some.json",
             "--appendEol", "false",
-            "--outputType", "HANDLEBAR", "--handlebar", "{{json .}}"})
+            "--outputType", "HANDLEBARS", "--handlebars", "{{json .}}"})
     void handlebarsJsonHelperObj(final Stdout stdout) {
         assertEquals("{\"a-string\":\"value1\",\"a-number\":1234,\"a-boolean\":true,\"a-null\":null,\"a-nested-object\":{\"nested\":true},\"a-list\":[\"s1\"]}", stdout.content());
     }
@@ -33,7 +33,7 @@ class DefaultCommandTest {
     @FusionCLITest(args = {
             "default", "--input", "src/test/resources/some.json",
             "--appendEol", "false",
-            "--outputType", "HANDLEBAR", "--handlebar", "{{jsonPretty this}}"})
+            "--outputType", "HANDLEBARS", "--handlebars", "{{jsonPretty this}}"})
     void handlebarsJsonPrettyHelperObj(final Stdout stdout) {
         assertEquals("""
                 {
@@ -53,7 +53,7 @@ class DefaultCommandTest {
     @FusionCLITest(args = {
             "default", "--input", "src/test/resources/some.json",
             "--appendEol", "false",
-            "--outputType", "HANDLEBAR", "--handlebar", "{{jsonPretty a-nested-object}}"})
+            "--outputType", "HANDLEBARS", "--handlebars", "{{jsonPretty a-nested-object}}"})
     void handlebarsJsonPrettyFilterObj(final Stdout stdout) {
         assertEquals("""
                 {
