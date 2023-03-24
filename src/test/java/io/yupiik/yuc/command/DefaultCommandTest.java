@@ -23,32 +23,32 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class DefaultCommandTest {
     @FusionCLITest(args = {
             "default", "--input", "src/test/resources/some.json",
-            "--appendEol", "false",
-            "--outputType", "HANDLEBARS", "--handlebars", "{{a-string}}"})
+            "--append-eol", "false",
+            "--output-type", "HANDLEBARS", "--handlebars", "{{a-string}}"})
     void handlebars(final Stdout stdout) {
         assertEquals("value1", stdout.content());
     }
 
     @FusionCLITest(args = {
             "default", "--input", "src/test/resources/some.json",
-            "--appendEol", "false",
-            "--outputType", "HANDLEBARS", "--handlebars", "{{json a-string}}"})
+            "--append-eol", "false",
+            "--output-type", "HANDLEBARS", "--handlebars", "{{json a-string}}"})
     void handlebarsJsonHelper(final Stdout stdout) {
         assertEquals("\"value1\"", stdout.content());
     }
 
     @FusionCLITest(args = {
             "default", "--input", "src/test/resources/some.json",
-            "--appendEol", "false",
-            "--outputType", "HANDLEBARS", "--handlebars", "{{json .}}"})
+            "--append-eol", "false",
+            "--output-type", "HANDLEBARS", "--handlebars", "{{json .}}"})
     void handlebarsJsonHelperObj(final Stdout stdout) {
         assertEquals("{\"a-string\":\"value1\",\"a-number\":1234,\"a-boolean\":true,\"a-null\":null,\"a-nested-object\":{\"nested\":true},\"a-list\":[\"s1\"]}", stdout.content());
     }
 
     @FusionCLITest(args = {
             "default", "--input", "src/test/resources/some.json",
-            "--appendEol", "false",
-            "--outputType", "HANDLEBARS", "--handlebars", "{{jsonPretty this}}"})
+            "--append-eol", "false",
+            "--output-type", "HANDLEBARS", "--handlebars", "{{jsonPretty this}}"})
     void handlebarsJsonPrettyHelperObj(final Stdout stdout) {
         assertEquals("""
                 {
@@ -67,8 +67,8 @@ class DefaultCommandTest {
 
     @FusionCLITest(args = {
             "default", "--input", "src/test/resources/some.json",
-            "--appendEol", "false",
-            "--outputType", "HANDLEBARS", "--handlebars", "{{jsonPretty a-nested-object}}"})
+            "--append-eol", "false",
+            "--output-type", "HANDLEBARS", "--handlebars", "{{jsonPretty a-nested-object}}"})
     void handlebarsJsonPrettyFilterObj(final Stdout stdout) {
         assertEquals("""
                 {
@@ -76,7 +76,7 @@ class DefaultCommandTest {
                 }""", stdout.content());
     }
 
-    @FusionCLITest(args = {"default", "--input", "src/test/resources/some.json", "--colored", "true", "--outputType", "INLINE"})
+    @FusionCLITest(args = {"default", "--input", "src/test/resources/some.json", "--colored", "true", "--output-type", "INLINE"})
     void colored(final Stdout stdout) {
         assertEquals("" +
                 "\u001B[1;37m{\u001B[0m\u001B[1;34m\"a-string\"\u001B[0m: \u001B[0;32m\"value1\"\u001B[0m\u001B[1;37m," +
@@ -106,7 +106,7 @@ class DefaultCommandTest {
                         """, stdout.content());
     }
 
-    @FusionCLITest(args = {"default", "--input", "src/test/resources/some.json", "--colored", "false", "--outputType", "INLINE"})
+    @FusionCLITest(args = {"default", "--input", "src/test/resources/some.json", "--colored", "false", "--output-type", "INLINE"})
     void inline(final Stdout stdout) {
         assertEquals("{\"a-string\": \"value1\", \"a-number\": 1234, \"a-boolean\": true, \"a-null\": null, \"a-nested-object\": {\"nested\": true}, \"a-list\": [\"s1\"]}\n", stdout.content());
     }

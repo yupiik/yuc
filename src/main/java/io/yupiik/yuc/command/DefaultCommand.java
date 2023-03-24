@@ -110,11 +110,11 @@ public class DefaultCommand implements Runnable {
     @RootConfiguration("-")
     public record Conf(
             @Property(defaultValue = "\"{{this}}\"", documentation = "If `true` output is colorized. Default: `{{this}}`.") String handlebars,
-            @Property(defaultValue = "io.yupiik.yuc.command.configuration.ColorScheme.DEFAULT", documentation = "If `true` output is colorized. Default: `DEFAULT`.") ColorScheme colorScheme,
+            @Property(value = "color-scheme", defaultValue = "io.yupiik.yuc.command.configuration.ColorScheme.DEFAULT", documentation = "If `true` output is colorized. Default: `DEFAULT`.") ColorScheme colorScheme,
             @Property(defaultValue = "null", documentation = "If `true` output is colorized. Default is automatic, if a tty is detected colors are enabled else disabled.") Boolean colored,
-            @Property(defaultValue = "true", documentation = "If `true` an EOL is appended to the output stream. Default: `true`.") boolean appendEol,
-            @Property(defaultValue = "DefaultCommand.OutputType.PRETTY", documentation = "Output type. Default: `PRETTY`.") OutputType outputType,
-            @Property(defaultValue = "16384", documentation = "JSON parser buffer provider size. Default: `16384`.") int bufferProviderSize,
+            @Property(value = "append-eol", defaultValue = "true", documentation = "If `true` an EOL is appended to the output stream. Default: `true`.") boolean appendEol,
+            @Property(value = "output-type", defaultValue = "DefaultCommand.OutputType.PRETTY", documentation = "Output type. Default: `PRETTY`.") OutputType outputType,
+            @Property(value = "buffer-provider-size", defaultValue = "16384", documentation = "JSON parser buffer provider size. Default: `16384`.") int bufferProviderSize,
             @Property(defaultValue = "true", documentation = "Should the JSON be prettified. Default: `true`.") boolean pretty,
             @Property(defaultValue = "\"UTF-8\"", documentation = "Charset to use to read the input stream. Default: `UTF-8`.") String charset,
             @Property(defaultValue = "\"-\"", documentation = "Output the command should use, default to `stdout` if set to `-` else a file path. Default: `-`.") String output,

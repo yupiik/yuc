@@ -20,16 +20,16 @@ import io.yupiik.fusion.framework.build.api.configuration.Property;
 // to get all colors (or install colortest):
 // for x in {0..8}; do for i in {30..37}; do for a in {40..47}; do echo -ne "\e[$x;$i;$a""m\$x;$i;$a""m\e[0;37;40m "; done; echo; done; done; echo ""
 public record ColorScheme(
-        @Property(defaultValue = "\"0\"", documentation = "Reset color suffix.") String reset,
-        @Property(defaultValue = "\"1;37\"", documentation = "Structure color prefix.") String object,
-        @Property(defaultValue = "\"1;37\"", documentation = "Structure color prefix.") String array,
-        @Property(defaultValue = "\"1;37\"", documentation = "Comma color prefix.") String comma,
-        @Property(value = "null", defaultValue = "\"1;30\"", documentation = "null color prefix.") String nullColor,
-        @Property(value = "true", defaultValue = "\"3;37\"", documentation = "True color prefix.") String trueColor,
-        @Property(value = "false", defaultValue = "\"3;37\"", documentation = "False color prefix.") String falseColor,
-        @Property(defaultValue = "\"1;34\"", documentation = "Key color prefix.") String key,
-        @Property(defaultValue = "\"0;32\"", documentation = "string color prefix.") String string,
-        @Property(defaultValue = "\"3;37\"", documentation = "Number color prefix.") String number
+        @Property(defaultValue = "\"0\"", documentation = "Reset color suffix. Default: `0`.") String reset,
+        @Property(defaultValue = "\"1;37\"", documentation = "Structure color prefix. Default: `1;37`.") String object,
+        @Property(defaultValue = "\"1;37\"", documentation = "Structure color prefix. Default: `1;37`.") String array,
+        @Property(defaultValue = "\"1;37\"", documentation = "Comma color prefix. Default: `1;37`.") String comma,
+        @Property(value = "null", defaultValue = "\"1;30\"", documentation = "null color prefix. Default: `1;30`.") String nullColor,
+        @Property(value = "true", defaultValue = "\"3;37\"", documentation = "True color prefix. Default: `3,37`.") String trueColor,
+        @Property(value = "false", defaultValue = "\"3;37\"", documentation = "False color prefix. Default: `3;37`.") String falseColor,
+        @Property(defaultValue = "\"1;34\"", documentation = "Key color prefix. Default: `1;34`.") String key,
+        @Property(defaultValue = "\"0;32\"", documentation = "string color prefix. Default: `0;32`.") String string,
+        @Property(defaultValue = "\"3;37\"", documentation = "Number color prefix. Default: `3;37`.") String number
 ) {
     public static final ColorScheme DEFAULT = new ColorScheme(
             "0", "1;37", "1;37", "1;37",

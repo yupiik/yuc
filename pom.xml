@@ -235,6 +235,21 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.11.0</version>
+        <executions>
+          <execution>
+            <id>compile-generated-classes</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/generated/**</include>
+              </includes>
+              <useIncrementalCompilation>false</useIncrementalCompilation>
+            </configuration>
+          </execution>
+        </executions>
         <configuration>
           <parameters>true</parameters>
           <source>${maven.compiler.release}</source>
@@ -247,7 +262,7 @@ under the License.
         <artifactId>arthur-maven-plugin</artifactId>
         <version>1.0.5</version>
         <configuration>
-          <main>io.yupiik.yuc.Yuc</main>
+          <main>io.yupiik.fusion.framework.api.main.Launcher</main>
           <graalVersion>22.3.0.r17</graalVersion>
           <enableAllSecurityServices>false</enableAllSecurityServices>
           <allowIncompleteClasspath>false</allowIncompleteClasspath>
@@ -262,7 +277,7 @@ under the License.
         <executions>
           <execution>
             <id>force-gen</id>
-            <phase>process-classes</phase>
+            <phase>compile</phase>
             <goals>
               <goal>minisite</goal>
             </goals>
@@ -280,14 +295,33 @@ under the License.
             <preAction>
               <type>io.yupiik.yuc.build.documentation.GenerateCliOpts</type>
               <configuration>
-                <output.doc>${project.basedir}/src/main/minisite/content/_partials/generated/cli.options.adoc
-                </output.doc>
+                <output.doc>${project.basedir}/src/main/minisite/content/_partials/generated/cli.options.adoc</output.doc>
                 <!-- this one could move to a exec:java but simpler to do it at once while site is small enough to not add overhead -->
+                <output.aliases>${project.build.directory}/generated-sources/minisite-preactions</output.aliases>
                 <output.help>${project.build.outputDirectory}/io/yupiik/yuc/command/HelpCommand.txt</output.help>
               </configuration>
             </preAction>
           </preActions>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.3.0</version>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/minisite-preactions</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
