@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2023 - Yupiik SAS - https://www.yupiik.com
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package io.yupiik.yuc.command;
 
 import io.yupiik.fusion.framework.build.api.cli.Command;
@@ -19,7 +34,10 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.Charset;
 
-@Command(name = "default", description = "Format the output as a prettified JSON.")
+@Command(name = "default", description = "" +
+        "Format the output as a prettified JSON." +
+        "Note that if no command is set as first parameter," +
+        "this command is used.")
 public class DefaultCommand implements Runnable {
     private final Conf conf;
     private final IO io;
@@ -91,15 +109,15 @@ public class DefaultCommand implements Runnable {
 
     @RootConfiguration("-")
     public record Conf(
-            @Property(defaultValue = "\"{{this}}\"", documentation = "If `true` output is colorized.") String handlebars,
-            @Property(defaultValue = "io.yupiik.yuc.command.configuration.ColorScheme.DEFAULT", documentation = "If `true` output is colorized.") ColorScheme colorScheme,
-            @Property(defaultValue = "null", documentation = "If `true` output is colorized.") Boolean colored,
-            @Property(defaultValue = "true", documentation = "If `true` an EOL is appended to the output stream.") boolean appendEol,
-            @Property(defaultValue = "DefaultCommand.OutputType.PRETTY", documentation = "Output type.") OutputType outputType,
-            @Property(defaultValue = "16384", documentation = "JSON parser buffer provider size.") int bufferProviderSize,
-            @Property(defaultValue = "true", documentation = "Should the JSON be prettified.") boolean pretty,
-            @Property(defaultValue = "\"UTF-8\"", documentation = "Charset to use to read the input stream.") String charset,
-            @Property(defaultValue = "\"-\"", documentation = "Output the command should use, default to `stdout` if set to `-` else a file path.") String output,
-            @Property(defaultValue = "\"-\"", documentation = "Input the command should format, default to `stdin` if set to `-` else a file path.") String input) {
+            @Property(defaultValue = "\"{{this}}\"", documentation = "If `true` output is colorized. Default: `{{this}}`.") String handlebars,
+            @Property(defaultValue = "io.yupiik.yuc.command.configuration.ColorScheme.DEFAULT", documentation = "If `true` output is colorized. Default: `DEFAULT`.") ColorScheme colorScheme,
+            @Property(defaultValue = "null", documentation = "If `true` output is colorized. Default is automatic, if a tty is detected colors are enabled else disabled.") Boolean colored,
+            @Property(defaultValue = "true", documentation = "If `true` an EOL is appended to the output stream. Default: `true`.") boolean appendEol,
+            @Property(defaultValue = "DefaultCommand.OutputType.PRETTY", documentation = "Output type. Default: `PRETTY`.") OutputType outputType,
+            @Property(defaultValue = "16384", documentation = "JSON parser buffer provider size. Default: `16384`.") int bufferProviderSize,
+            @Property(defaultValue = "true", documentation = "Should the JSON be prettified. Default: `true`.") boolean pretty,
+            @Property(defaultValue = "\"UTF-8\"", documentation = "Charset to use to read the input stream. Default: `UTF-8`.") String charset,
+            @Property(defaultValue = "\"-\"", documentation = "Output the command should use, default to `stdout` if set to `-` else a file path. Default: `-`.") String output,
+            @Property(defaultValue = "\"-\"", documentation = "Input the command should format, default to `stdin` if set to `-` else a file path. Default: `-`.") String input) {
     }
 }

@@ -1,0 +1,5 @@
+= Yuc Stack
+:minisite-index: 100
+:minisite-index-title: Getting Started
+:minisite-index-description: Entry point.
+:minisite-index-icon: play
