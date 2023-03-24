@@ -247,9 +247,6 @@ under the License.
         <artifactId>arthur-maven-plugin</artifactId>
         <version>1.0.5</version>
         <configuration>
-          <customOptions>
-            <customOption>--verbose</customOption>
-          </customOptions>
           <main>io.yupiik.yuc.Yuc</main>
           <graalVersion>22.3.0.r17</graalVersion>
           <enableAllSecurityServices>false</enableAllSecurityServices>
@@ -276,11 +273,15 @@ under the License.
         </executions>
         <configuration>
           <siteBase>/yuc/</siteBase>
+          <attributes>
+            <partialsdir>${project.basedir}/src/main/minisite/content/_partials</partialsdir>
+          </attributes>
           <preActions>
             <preAction>
               <type>io.yupiik.yuc.build.documentation.GenerateCliOpts</type>
               <configuration>
-                <output.doc>${project.basedir}/src/main/minisite/content/_partials/generated/cli.options.adoc</output.doc>
+                <output.doc>${project.basedir}/src/main/minisite/content/_partials/generated/cli.options.adoc
+                </output.doc>
                 <!-- this one could move to a exec:java but simpler to do it at once while site is small enough to not add overhead -->
                 <output.help>${project.build.outputDirectory}/io/yupiik/yuc/command/HelpCommand.txt</output.help>
               </configuration>
