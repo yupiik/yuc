@@ -17,6 +17,7 @@ package io.yupiik.yuc.io;
 
 import io.yupiik.fusion.framework.api.scope.ApplicationScoped;
 
+import java.io.BufferedReader;
 import java.io.FilterInputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
@@ -24,7 +25,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PushbackReader;
-import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -32,7 +32,8 @@ import java.nio.file.Path;
 
 @ApplicationScoped
 public class IO {
-    public Reader openInput(final Charset charset, final String value) {
+    // todo: optimize buffer usages (+ config from CLI - already there anyway, just needs to be propagated)
+    public BufferedReader openInput(final Charset charset, final String value) {
         try {
             final var rawReader = switch (value) {
                 case "&0", "-" -> new InputStreamReader(new FilterInputStream(System.in) {
@@ -47,9 +48,9 @@ public class IO {
             final int first = pushbackReader.read();
             pushbackReader.unread(first);
             if (first == '<') { // assume xml
-                return new Xml2JsonReader(pushbackReader);
+                return new BufferedReader(new Xml2JsonReader(pushbackReader));
             }
-            return pushbackReader;
+            return new BufferedReader(pushbackReader);
         } catch (final IOException e) {
             throw new IllegalArgumentException("Invalid input: '" + value + "'", e);
         }

@@ -30,9 +30,13 @@ import io.yupiik.yuc.formatter.impl.PrettyFormatter;
 import io.yupiik.yuc.io.IO;
 import org.fusesource.jansi.internal.CLibrary;
 
+import java.io.FilterReader;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.function.Supplier;
 
 @Command(name = "default", description = "" +
         "Format the output as a prettified JSON." +
@@ -52,39 +56,91 @@ public class DefaultCommand implements Runnable {
     @Override
     public void run() {
         final var charset = Charset.forName(conf.charset());
-        final var input = io.openInput(charset, conf.input());
-        try (final var parser = new JsonParser(input, conf.bufferProviderSize(), new BufferProvider(conf.bufferProviderSize()), true);
+        final var bufferProvider = new BufferProvider(conf.bufferProviderSize());
+        try (final var input = io.openInput(charset, conf.input());
              final var writer = io.openOutput(charset, conf.output())) {
-            final var visitor = newVisitor(writer, charset);
-            while (parser.hasNext()) {
-                switch (parser.next()) {
-                    case START_ARRAY -> visitor.onStartArray();
-                    case END_ARRAY -> visitor.onEndArray();
-                    case START_OBJECT -> visitor.onStartObject();
-                    case END_OBJECT -> visitor.onEndObject();
-                    case KEY_NAME -> visitor.onKey(parser.getString());
-                    case VALUE_STRING -> visitor.onString(parser.getString());
-                    case VALUE_TRUE -> visitor.onBoolean(true);
-                    case VALUE_FALSE -> visitor.onBoolean(false);
-                    case VALUE_NUMBER -> visitor.onNumber(parser.getString());
-                    case VALUE_NULL -> visitor.onNull();
+            final var visitorFactory = newVisitor(writer, charset);
+            if (!conf.ndjson()) {
+                try (final var parser = newParser(bufferProvider, input)) {
+                    onData(parser, writer, visitorFactory.get());
                 }
-            }
-            visitor.onEnd();
-            if (conf.appendEol()) {
-                writer.write('\n');
+                afterLine(writer);
+            } else {
+                String line;
+                boolean addEol = true;
+                while ((line = input.readLine()) != null) {
+                    if (addEol) {
+                        addEol = false;
+                    } else {
+                        writer.write('\n');
+                    }
+                    try {
+                        if (isDataLine(line)) {
+                            try (final var parser = newParser(bufferProvider, new StringReader(line.strip()))) {
+                                onData(parser, writer, visitorFactory.get());
+                            }
+                        } else if (!conf.ndjsonIgnoreUnknownLines()) {
+                            writer.write(line);
+                        } else {
+                            addEol = true;
+                        }
+                    } catch (final RuntimeException | IOException e) {
+                        if (!conf.ndjsonIgnoreUnknownLines()) {
+                            writer.write(line);
+                        }
+                    }
+                }
+                afterLine(writer);
             }
         } catch (final IOException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    private JsonVisitor newVisitor(final Writer writer, final Charset charset) {
+    private boolean isDataLine(final String line) {
+        return (line.startsWith("{") && line.endsWith("}")) ||
+                (line.startsWith("<") && line.endsWith(">"));
+    }
+
+    private JsonParser newParser(final BufferProvider bufferProvider, final Reader input) {
+        return new JsonParser(new FilterReader(input) {
+            @Override
+            public void close() {
+                // no-op
+            }
+        }, conf.bufferProviderSize(), bufferProvider, true);
+    }
+
+    private void onData(final JsonParser parser, final Writer writer, final JsonVisitor visitor) throws IOException {
+        while (parser.hasNext()) {
+            switch (parser.next()) {
+                case START_ARRAY -> visitor.onStartArray();
+                case END_ARRAY -> visitor.onEndArray();
+                case START_OBJECT -> visitor.onStartObject();
+                case END_OBJECT -> visitor.onEndObject();
+                case KEY_NAME -> visitor.onKey(parser.getString());
+                case VALUE_STRING -> visitor.onString(parser.getString());
+                case VALUE_TRUE -> visitor.onBoolean(true);
+                case VALUE_FALSE -> visitor.onBoolean(false);
+                case VALUE_NUMBER -> visitor.onNumber(parser.getString());
+                case VALUE_NULL -> visitor.onNull();
+            }
+        }
+        visitor.onEnd();
+    }
+
+    private void afterLine(final Writer writer) throws IOException {
+        if (conf.appendEol()) {
+            writer.write('\n');
+        }
+    }
+
+    private Supplier<JsonVisitor> newVisitor(final Writer writer, final Charset charset) {
         final var output = new SimpleWriter(writer);
         return switch (conf.outputType()) {
-            case HANDLEBARS -> new HandlebarFormatter(output, conf.handlebars(), jsonMapper, charset);
-            case PRETTY -> new PrettyFormatter(output, getColorScheme());
-            default -> new DefaultFormatter(output, getColorScheme());
+            case HANDLEBARS -> () -> new HandlebarFormatter(output, conf.handlebars(), jsonMapper, charset);
+            case PRETTY -> () -> new PrettyFormatter(output, getColorScheme());
+            default -> () -> new DefaultFormatter(output, getColorScheme());
         };
     }
 
@@ -118,6 +174,8 @@ public class DefaultCommand implements Runnable {
             @Property(defaultValue = "true", documentation = "Should the JSON be prettified. Default: `true`.") boolean pretty,
             @Property(defaultValue = "\"UTF-8\"", documentation = "Charset to use to read the input stream. Default: `UTF-8`.") String charset,
             @Property(defaultValue = "\"-\"", documentation = "Output the command should use, default to `stdout` if set to `-` else a file path. Default: `-`.") String output,
-            @Property(defaultValue = "\"-\"", documentation = "Input the command should format, default to `stdin` if set to `-` else a file path. Default: `-`.") String input) {
+            @Property(defaultValue = "\"-\"", documentation = "Input the command should format, default to `stdin` if set to `-` else a file path. Default: `-`.") String input,
+            @Property(defaultValue = "false", documentation = "If `true`, input is handled per line instead of globally.") boolean ndjson,
+            @Property(value = "ndjson-ignore-unknown", defaultValue = "false", documentation = "If `true`, not JSON/XML lines are swallowed.") boolean ndjsonIgnoreUnknownLines) {
     }
 }

@@ -21,6 +21,53 @@ import io.yupiik.fusion.testing.launcher.Stdout;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DefaultCommandTest {
+    @FusionCLITest(args = {"default", "--input", "src/test/resources/nd.json", "--ndjson", "true"})
+    void ndjson(final Stdout stdout) {
+        assertEquals("""
+                Picked some options - line to passthru
+                {
+                  "a-string": "value1",
+                  "a-number": 1234,
+                  "a-boolean": true,
+                  "a-null": null,
+                  "a-nested-object": {
+                    "nested": true
+                  },
+                  "a-list": [
+                    "s1"
+                  ]
+                }
+                garbage ignored
+                {
+                  "another": true
+                }
+                """, stdout.content());
+    }
+
+    @FusionCLITest(args = {
+            "default", "--input", "src/test/resources/nd.json",
+            "--ndjson", "true", "--ndjson-ignore-unknown", "true"
+    })
+    void ndjsonIgnoreUnknown(final Stdout stdout) {
+        assertEquals("""
+                {
+                  "a-string": "value1",
+                  "a-number": 1234,
+                  "a-boolean": true,
+                  "a-null": null,
+                  "a-nested-object": {
+                    "nested": true
+                  },
+                  "a-list": [
+                    "s1"
+                  ]
+                }
+                {
+                  "another": true
+                }
+                """, stdout.content());
+    }
+
     @FusionCLITest(args = {
             "default", "--input", "src/test/resources/some.json",
             "--append-eol", "false",
