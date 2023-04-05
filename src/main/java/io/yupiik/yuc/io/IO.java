@@ -33,7 +33,7 @@ import java.nio.file.Path;
 @ApplicationScoped
 public class IO {
     // todo: optimize buffer usages (+ config from CLI - already there anyway, just needs to be propagated)
-    public BufferedReader openInput(final Charset charset, final String value) {
+    public BufferedReader openInput(final Charset charset, final String value, final int bufferSize) {
         try {
             final var rawReader = switch (value) {
                 case "&0", "-" -> new InputStreamReader(new FilterInputStream(System.in) {
@@ -42,7 +42,7 @@ public class IO {
                         // no-op
                     }
                 }, charset);
-                default -> Files.newBufferedReader(Path.of(value), charset);
+                default -> new BufferedReader(new InputStreamReader(Files.newInputStream(Path.of(value)), charset), bufferSize);
             };
             final var pushbackReader = new PushbackReader(rawReader);
             final int first = pushbackReader.read();

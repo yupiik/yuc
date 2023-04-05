@@ -57,7 +57,7 @@ public class DefaultCommand implements Runnable {
     public void run() {
         final var charset = Charset.forName(conf.charset());
         final var bufferProvider = new BufferProvider(conf.bufferProviderSize(), 8 /* could be 2 theorically but does not change much */);
-        try (final var input = io.openInput(charset, conf.input());
+        try (final var input = io.openInput(charset, conf.input(), conf.bufferReaderSize());
              final var writer = io.openOutput(charset, conf.output())) {
             final var visitorFactory = newVisitor(writer, charset);
             if (!conf.ndjson()) {
@@ -176,6 +176,7 @@ public class DefaultCommand implements Runnable {
             @Property(defaultValue = "\"-\"", documentation = "Output the command should use, default to `stdout` if set to `-` else a file path. Default: `-`.") String output,
             @Property(defaultValue = "\"-\"", documentation = "Input the command should format, default to `stdin` if set to `-` else a file path. Default: `-`.") String input,
             @Property(defaultValue = "false", documentation = "If `true`, input is handled per line instead of globally.") boolean ndjson,
-            @Property(value = "ndjson-ignore-unknown", defaultValue = "false", documentation = "If `true`, not JSON/XML lines are swallowed.") boolean ndjsonIgnoreUnknownLines) {
+            @Property(value = "ndjson-ignore-unknown", defaultValue = "false", documentation = "If `true`, not JSON/XML lines are swallowed.") boolean ndjsonIgnoreUnknownLines,
+            @Property(value = "buffer-reader-size", defaultValue = "128", documentation = "In memory buffer size, i.e. the size which will be awaited before considering there are inputs. Too big will handle inputs as chunks (which is an issue do ndjson), too low will be slow.") int bufferReaderSize) {
     }
 }
