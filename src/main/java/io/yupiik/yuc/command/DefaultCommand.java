@@ -56,7 +56,7 @@ public class DefaultCommand implements Runnable {
     @Override
     public void run() {
         final var charset = Charset.forName(conf.charset());
-        final var bufferProvider = new BufferProvider(conf.bufferProviderSize());
+        final var bufferProvider = new BufferProvider(conf.bufferProviderSize(), 8 /* could be 2 theorically but does not change much */);
         try (final var input = io.openInput(charset, conf.input());
              final var writer = io.openOutput(charset, conf.output())) {
             final var visitorFactory = newVisitor(writer, charset);

@@ -31,7 +31,7 @@
   <properties>
     <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <fusion.version>1.0.1</fusion.version>
+    <fusion.version>1.0.2-SNAPSHOT</fusion.version>
   </properties>
 
   <dependencies>
@@ -246,11 +246,15 @@ under the License.
               <includes>
                 <include>**/generated/**</include>
               </includes>
+              <compilerArgs>
+                <compilerArg>-Afusion.moduleAppend=true</compilerArg>
+              </compilerArgs>
               <useIncrementalCompilation>false</useIncrementalCompilation>
             </configuration>
           </execution>
         </executions>
         <configuration>
+          <fork>false</fork>
           <parameters>true</parameters>
           <source>${maven.compiler.release}</source>
           <target>${maven.compiler.release}</target>
