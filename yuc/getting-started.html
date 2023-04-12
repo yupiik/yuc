@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Getting Started</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Yuc">
+    <meta name="author" content="Yupiik Minisite Generator">
+    <meta name="generator" content="Yupiik Minisite Generator">
+    
+    <link rel="shortcut icon" href="//www.yupiik.com/img/favicon.png">
+
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Montserrat:300,400,500,700" rel="stylesheet">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/asciidoctor.js/1.5.5-5/css/asciidoctor.min.css" integrity="sha512-kI7tn5cuEg16kMeXnYmg8rEJPxbxzEM7Gsr191iQdLDevFBLXPCSU9aZWSVuP61tMZWU3nBAR1cJ7SmXnOGLZw==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" integrity="sha512-oc9+XSs1H243/FRN9Rw62Fn8EtxjEYWHXRvjS43YtueEewbS6ObfXcJNyohjHqVKFPoXXUxwc+q1K7Dee6vv9g==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.1/styles/vs2015.min.css" integrity="sha512-w8aclkBlN3Ha08SMwFKXFJqhSUx2qlvTBFLLelF8sm4xQnlg64qmGB/A6pBIKy0W8Bo51yDMDtQiPLNRq1WMcQ==" crossorigin="anonymous" />
+    <link id="theme-style" rel="stylesheet" href="/yuc//css/theme.css?v=1.0.1-SNAPSHOT">
+    
+</head>
+<body>
+    <header class="header fixed-top">
+        <div class="branding docs-branding">
+            <div class="container-fluid position-relative py-2">
+                <div class="docs-logo-wrapper">
+	                <div class="site-logo"><a title="Home" class="navbar-brand" href="/yuc//index.html">
+	                <img class="logo-icon mr-2" src="//www.yupiik.com/img/favicon.png" alt="logo">
+	                <span class="logo-text">Yuc <span class="text-alt">Docs</span></span></a></div>
+                </div>
+	            <div class="docs-top-utilities d-flex justify-content-end align-items-center">
+					
+					<li class="list-inline-item"><a title="Search" id="search-button" href="#" data-toggle="modal" data-target="#searchModal"><i data-toggle="tooltip" data-placement="top" title="Search" class="fas fa-search"></i></a></li>
+
+					<ul class="social-list list-inline mx-md-3 mx-lg-5 mb-0 d-none d-lg-flex">
+						
+						<li class="list-inline-item"><a href="https://www.github.com/yupiik/"><i class="fab fa-github fa-fw"></i></a></li><li class="list-inline-item"><a href="https://www.linkedin.com/company/yupiik/"><i class="fab fa-linkedin fa-fw"></i></a></li>
+		            </ul>
+	            </div>
+            </div>
+        </div>
+    </header>
+	<div class="page">
+        <div class="page-navigation-left">
+            <h3>Menu</h3>
+            <ul>
+                <li>
+                    <a title="Yuc Stack" href="/yuc//yuc/getting-started.html">
+                        <i class="fas fa-play"></i>Getting Started
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="yuc-getting-started-html-container" class="container page-content yuc-getting-started-html">
+                        <div class="page-header">
+                <h1>Yuc Stack</h1>
+            </div>
+            <div class="page-content-body">
+                <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Here are the available commands:</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_default">default</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Format the output as a prettified JSON.Note that if no command is set as first parameter,this command is used.</p>
+</div>
+<div class="sect2">
+<h3 id="_parameters">Parameters</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">--append-eol</dt>
+<dd>
+<p>If <code>true</code> an EOL is appended to the output stream. Default: <code>true</code>. Aliases: <code>-ae</code>, <code>-AE</code>.</p>
+</dd>
+<dt class="hdlist1">--buffer-provider-size</dt>
+<dd>
+<p>JSON parser buffer provider size. Default: <code>16384</code>. Aliases: <code>-bps</code>, <code>-BPS</code>.</p>
+</dd>
+<dt class="hdlist1">--buffer-reader-size</dt>
+<dd>
+<p>In memory buffer size, i.e. the size which will be awaited before considering there are inputs. Too big will handle inputs as chunks (which is an issue do ndjson), too low will be slow. Aliases: <code>-brs</code>, <code>-BRS</code>.</p>
+</dd>
+<dt class="hdlist1">--charset</dt>
+<dd>
+<p>Charset to use to read the input stream. Default: <code>UTF-8</code>. Aliases: <code>-c</code>, <code>-C</code>.</p>
+</dd>
+<dt class="hdlist1">--color-scheme-array</dt>
+<dd>
+<p>Structure color prefix. Default: <code>1;37</code>. Aliases: <code>-CSA</code>, <code>-csa</code>.</p>
+</dd>
+<dt class="hdlist1">--color-scheme-comma</dt>
+<dd>
+<p>Comma color prefix. Default: <code>1;37</code>. Aliases: <code>-CSC</code>, <code>-csc</code>.</p>
+</dd>
+<dt class="hdlist1">--color-scheme-false</dt>
+<dd>
+<p>False color prefix. Default: <code>3;37</code>. Aliases: <code>-CSF</code>, <code>-csf</code>.</p>
+</dd>
+<dt class="hdlist1">--color-scheme-key</dt>
+<dd>
+<p>Key color prefix. Default: <code>1;34</code>. Aliases: <code>-CSK</code>, <code>-csk</code>.</p>
+</dd>
+<dt class="hdlist1">--color-scheme-null</dt>
+<dd>
+<p>null color prefix. Default: <code>1;30</code>. Aliases: <code>-CSN</code>, <code>-csn</code>.</p>
+</dd>
+<dt class="hdlist1">--color-scheme-number</dt>
+<dd>
+<p>Number color prefix. Default: <code>3;37</code>. Aliases: <code>-CSNBR</code>, <code>-csnbr</code>.</p>
+</dd>
+<dt class="hdlist1">--color-scheme-object</dt>
+<dd>
+<p>Structure color prefix. Default: <code>1;37</code>. Aliases: <code>-CSO</code>, <code>-cso</code>.</p>
+</dd>
+<dt class="hdlist1">--color-scheme-reset</dt>
+<dd>
+<p>Reset color suffix. Default: <code>0</code>. Aliases: <code>-CSR</code>, <code>-csr</code>.</p>
+</dd>
+<dt class="hdlist1">--color-scheme-string</dt>
+<dd>
+<p>string color prefix. Default: <code>0;32</code>. Aliases: <code>-CSS</code>, <code>-css</code>.</p>
+</dd>
+<dt class="hdlist1">--color-scheme-true</dt>
+<dd>
+<p>True color prefix. Default: <code>3,37</code>. Aliases: <code>-CST</code>, <code>-cst</code>.</p>
+</dd>
+<dt class="hdlist1">--colored</dt>
+<dd>
+<p>If <code>true</code> output is colorized. Default is automatic, if a tty is detected colors are enabled else disabled. Aliases: <code>-colored</code>, <code>-COLORED</code>.</p>
+</dd>
+<dt class="hdlist1">--handlebars</dt>
+<dd>
+<p>If <code>true</code> output is colorized. Default: <code>{{this}}</code>. Aliases: <code>-h</code>, <code>-H</code>.</p>
+</dd>
+<dt class="hdlist1">--input</dt>
+<dd>
+<p>Input the command should format, default to <code>stdin</code> if set to <code>-</code> else a file path. Default: <code>-</code>. Aliases: <code>-i</code>, <code>-I</code>.</p>
+</dd>
+<dt class="hdlist1">--ndjson</dt>
+<dd>
+<p>If <code>true</code>, input is handled per line instead of globally. Aliases: <code>-N</code>, <code>-n</code>.</p>
+</dd>
+<dt class="hdlist1">--ndjson-ignore-unknown</dt>
+<dd>
+<p>If <code>true</code>, not JSON/XML lines are swallowed. Aliases: <code>-niu</code>, <code>-NIU</code>.</p>
+</dd>
+<dt class="hdlist1">--output</dt>
+<dd>
+<p>Output the command should use, default to <code>stdout</code> if set to <code>-</code> else a file path. Default: <code>-</code>. Aliases: <code>-O</code>, <code>-o</code>.</p>
+</dd>
+<dt class="hdlist1">--output-type</dt>
+<dd>
+<p>Output type. Default: <code>PRETTY</code>. Aliases: <code>-ot</code>, <code>-OT</code>.</p>
+</dd>
+<dt class="hdlist1">--pretty</dt>
+<dd>
+<p>Should the JSON be prettified. Default: <code>true</code>. Aliases: <code>-P</code>, <code>-p</code>.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_help">help</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Shows this text.</p>
+</div>
+<div class="sect2">
+<h3 id="_parameters_2">Parameters</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">--output</dt>
+<dd>
+<p>Output the command should use, default to <code>stdout</code> if set to <code>-</code> else a file path. Default: <code>-</code>. Aliases: <code>-o</code>, <code>-O</code>.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+                
+            </div>
+        </div>
+    <div class="page-navigation-right">
+        <h3>Navigation</h3>
+        <nav class="generated-nav-menu"></nav>
+    </div>
+    </div>
+    <hr />
+    <footer class="footer pb-5">
+	    <div class="footer-bottom text-center">
+		    <ul class="social-list list-unstyled">
+                <li class="list-inline-item"><a href="https://www.github.com/yupiik/"><i class="fab fa-github fa-fw"></i></a></li><li class="list-inline-item"><a href="https://www.linkedin.com/company/yupiik/"><i class="fab fa-linkedin fa-fw"></i></a></li>
+	        </ul>
+            <small class="copyright">Yupiik &copy;</small> | <a href="https://www.yupiik.com/terms-of-service/">Terms of service</a> | <a href="https://www.yupiik.com/privacy-policy/">Privacy policy</a>
+	    </div>
+    </footer>
+
+    <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="searchModalLabel">Search</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form onsubmit="return false;" class="form-inline">
+          <div class="form-group">
+            <label for="searchInput"><b>Search: </b></label>
+            <input class="form-control" id="searchInput" placeholder="Enter search text and hit enter...">
+          </div>
+        </form>
+        <div class="search-hits"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" ></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.min.js" integrity="sha512-8qmis31OQi6hIRgvkht0s6mCOittjMa9GMqtK9hes5iEQBQE/Ca6yGE5FsW36vyipGoWQswBj/QBm2JR086Rkw==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.1/highlight.min.js" integrity="sha512-d00ajEME7cZhepRqSIVsQVGDJBdZlfHyQLNC6tZXYKTG7iwcF8nhlFuppanz8hYgXr8VvlfKh4gLC25ud3c90A==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.1/languages/bash.min.js" integrity="sha512-Hg0ufGEvn0AuzKMU0psJ1iH238iUN6THh7EI0CfA0n1sd3yu6PYet4SaDMpgzN9L1yQHxfB3yc5ezw3PwolIfA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.1/languages/bash.min.js" integrity="sha512-Hg0ufGEvn0AuzKMU0psJ1iH238iUN6THh7EI0CfA0n1sd3yu6PYet4SaDMpgzN9L1yQHxfB3yc5ezw3PwolIfA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.1/languages/json.min.js" integrity="sha512-37sW1XqaJmseHAGNg4N4Y01u6g2do6LZL8tsziiL5CMXGy04Th65OXROw2jeDeXLo5+4Fsx7pmhEJJw77htBFg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.1/languages/dockerfile.min.js" integrity="sha512-eRNl3ty7GOJPBN53nxLgtSSj2rkYj5/W0Vg0MFQBw8xAoILeT6byOogENHHCRRvHil4pKQ/HbgeJ5DOwQK3SJA==" crossorigin="anonymous"></script>
+    <script>if (!(window.minisite || {}).skipHighlightJs) { hljs.highlightAll(); }</script>
+    <script src="/yuc//js/minisite.js?v=1.0.1-SNAPSHOT"></script>
+    <script>$('.page-content-body').generatedNavMenu();</script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.3/fuse.min.js" integrity="sha512-neoBxVNv0UMXjoilAYGxfWrSsW6iAVclx7vQKdPJ9Peet1bM5YQjU0aIB8LtH8iNPa+pAyMZprBBw2ZQ/Q1LjQ==" crossorigin="anonymous"></script>
+
+</body>
+</html>
