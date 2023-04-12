@@ -1,0 +1,12 @@
+{
+  "skip": false,
+  "name": "YUC",
+  "description": "Simple JSON/XML2JSON CLI formatter.",
+  "website": "https://www.yupiik.io/yuc",
+  "logo": "https://www.yupiik.com/img/logo.png",
+  "group": "Yupiik Stack",
+  "categories": [
+    "java",
+    "cli"
+  ]
+}
