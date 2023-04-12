@@ -141,7 +141,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.0-M1</version>
         <configuration>
           <autoVersionSubmodules>true</autoVersionSubmodules>
           <releaseProfiles>release</releaseProfiles>
@@ -387,6 +387,35 @@ under the License.
   </distributionManagement>
 
   <profiles>
+    <profile>
+        <id>native</id>
+        <build>
+            <finalName>${project.artifactId}</finalName>
+            <plugins>
+                <plugin> <!-- mvn package -Pnative -DskipTests  -->
+                  <groupId>org.apache.geronimo.arthur</groupId>
+                  <artifactId>arthur-maven-plugin</artifactId>
+                  <version>1.0.5</version>
+                  <executions>
+                    <execution>
+                      <id>native</id>
+                      <phase>package</phase>
+                      <goals>
+                        <goal>native-image</goal>
+                      </goals>
+                    </execution>
+                  </executions>
+                  <configuration>
+                    <main>io.yupiik.fusion.framework.api.main.Launcher</main>
+                    <graalVersion>22.3.0.r17</graalVersion>
+                    <enableAllSecurityServices>false</enableAllSecurityServices>
+                    <allowIncompleteClasspath>false</allowIncompleteClasspath>
+                    <buildStaticImage>true</buildStaticImage>
+                  </configuration>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
     <profile>
       <id>release</id>
       <activation>
