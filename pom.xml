@@ -31,7 +31,7 @@
   <properties>
     <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <fusion.version>1.0.2-SNAPSHOT</fusion.version>
+    <fusion.version>1.0.2</fusion.version>
   </properties>
 
   <dependencies>
