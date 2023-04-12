@@ -261,6 +261,10 @@ under the License.
           <release>${maven.compiler.release}</release>
         </configuration>
       </plugin>
+      <!--
+          mvn arthur:native-image for binaries
+          mvn arthur:native-image arthur:docker for build docker image with binaries
+      -->
       <plugin>
         <groupId>org.apache.geronimo.arthur</groupId>
         <artifactId>arthur-maven-plugin</artifactId>
