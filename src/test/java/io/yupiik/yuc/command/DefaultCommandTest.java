@@ -125,13 +125,12 @@ class DefaultCommandTest {
 
     @FusionCLITest(args = {"default", "--input", "src/test/resources/some.json", "--colored", "true", "--output-type", "INLINE"})
     void colored(final Stdout stdout) {
-        assertEquals("" +
-                "\u001B[1;37m{\u001B[0m\u001B[1;34m\"a-string\"\u001B[0m: \u001B[0;32m\"value1\"\u001B[0m\u001B[1;37m," +
-                "\u001B[0m \u001B[1;34m\"a-number\"\u001B[0m: \u001B[3;37m1234\u001B[0m\u001B[1;37m," +
-                "\u001B[0m \u001B[1;34m\"a-boolean\"\u001B[0m: \u001B[3;37mtrue\u001B[0m\u001B[1;37m," +
-                "\u001B[0m \u001B[1;34m\"a-null\"\u001B[0m: \u001B[1;30mnull\u001B[0m\u001B[1;37m," +
-                "\u001B[0m \u001B[1;34m\"a-nested-object\"\u001B[0m: \u001B[1;37m{\u001B[0m\u001B[1;34m\"nested\"\u001B[0m: \u001B[3;37mtrue\u001B[0m\u001B[1;37m}\u001B[0m\u001B[1;37m," +
-                "\u001B[0m \u001B[1;34m\"a-list\"\u001B[0m: \u001B[1;37m[\u001B[0m\u001B[0;32m\"s1\"\u001B[0m\u001B[1;37m]\u001B[0m\u001B[1;37m}\u001B[0m\n", stdout.content());
+        assertEquals("\u001B[1;37m{\u001B[0m\u001B[1;34m\"a-string\"\u001B[0m:\u001B[0;32m\"value1\"\u001B[0m\u001B[1;37m," +
+                "\u001B[0m\u001B[1;34m\"a-number\"\u001B[0m:\u001B[3;37m1234\u001B[0m\u001B[1;37m," +
+                "\u001B[0m\u001B[1;34m\"a-boolean\"\u001B[0m:\u001B[3;37mtrue\u001B[0m\u001B[1;37m," +
+                "\u001B[0m\u001B[1;34m\"a-null\"\u001B[0m:\u001B[1;30mnull\u001B[0m\u001B[1;37m," +
+                "\u001B[0m\u001B[1;34m\"a-nested-object\"\u001B[0m:\u001B[1;37m{\u001B[0m\u001B[1;34m\"nested\"\u001B[0m:\u001B[3;37mtrue\u001B[0m\u001B[1;37m}\u001B[0m\u001B[1;37m," +
+                "\u001B[0m\u001B[1;34m\"a-list\"\u001B[0m:\u001B[1;37m[\u001B[0m\u001B[0;32m\"s1\"\u001B[0m\u001B[1;37m]\u001B[0m\u001B[1;37m}\u001B[0m\n", stdout.content());
     }
 
     @FusionCLITest(args = {"default", "--input", "src/test/resources/some.json", "--colored", "true"})
@@ -155,7 +154,7 @@ class DefaultCommandTest {
 
     @FusionCLITest(args = {"default", "--input", "src/test/resources/some.json", "--colored", "false", "--output-type", "INLINE"})
     void inline(final Stdout stdout) {
-        assertEquals("{\"a-string\": \"value1\", \"a-number\": 1234, \"a-boolean\": true, \"a-null\": null, \"a-nested-object\": {\"nested\": true}, \"a-list\": [\"s1\"]}\n", stdout.content());
+        assertEquals("{\"a-string\":\"value1\",\"a-number\":1234,\"a-boolean\":true,\"a-null\":null,\"a-nested-object\":{\"nested\":true},\"a-list\":[\"s1\"]}\n", stdout.content());
     }
 
     @FusionCLITest(args = {"default", "--input", "src/test/resources/some.json", "--colored", "false"})
@@ -174,6 +173,95 @@ class DefaultCommandTest {
                   ]
                 }
                 """, stdout.content());
+    }
+
+    @FusionCLITest(args = {"default", "--input", "src/test/resources/list.json", "--colored", "false"})
+    void formattedList(final Stdout stdout) {
+        assertEquals("""
+                [
+                  {
+                    "a-string": "value1",
+                    "a-number": 1234,
+                    "a-boolean": true,
+                    "a-null": null,
+                    "a-nested-object": {
+                      "nested": true
+                    },
+                    "a-list": [
+                      "s1"
+                    ]
+                  },
+                  {
+                    "a-string": "value1",
+                    "a-number": 1234,
+                    "a-boolean": true,
+                    "a-null": null,
+                    "a-nested-object": {
+                      "nested": true
+                    },
+                    "a-list": [
+                      "s1"
+                    ]
+                  }
+                ]
+                """, stdout.content());
+    }
+
+    @FusionCLITest(args = {"default", "--input", "src/test/resources/list-nested.json", "--colored", "false"})
+    void formattedLists(final Stdout stdout) {
+        assertEquals("""
+                [
+                  {
+                    "a-list": [
+                      {
+                        "obj": {
+                          "nestedliststring": [
+                            "a",
+                            "b"
+                          ],
+                          "nestedlistobj": [
+                            {
+                              "child": true
+                            },
+                            {
+                              "child": false
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "a-list": [
+                      {
+                        "obj": {
+                          "nestedliststring": [
+                            "a",
+                            "b"
+                          ],
+                          "nestedlistobj": [
+                            {
+                              "child": true
+                            },
+                            {
+                              "child": false
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+                """, stdout.content());
+    }
+
+    @FusionCLITest(args = {"default", "--input", "src/test/resources/list-nested.json", "--output-type", "INLINE"})
+    void lists(final Stdout stdout) {
+        assertEquals("[" +
+                        "{\"a-list\":[{\"obj\":{\"nestedliststring\":[\"a\",\"b\"],\"nestedlistobj\":[{\"child\":true},{\"child\":false}]}}]}," +
+                        "{\"a-list\":[{\"obj\":{\"nestedliststring\":[\"a\",\"b\"],\"nestedlistobj\":[{\"child\":true},{\"child\":false}]}}]}" +
+                        "]\n",
+                stdout.content());
     }
 
     @FusionCLITest(args = {"default", "--input", "src/test/resources/simple.xml", "--colored", "false"})

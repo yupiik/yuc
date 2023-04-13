@@ -62,7 +62,7 @@ public class DefaultCommand implements Runnable {
             final var visitorFactory = newVisitor(writer, charset);
             if (!conf.ndjson()) {
                 try (final var parser = newParser(bufferProvider, input)) {
-                    onData(parser, writer, visitorFactory.get());
+                    onData(parser, visitorFactory.get());
                 }
                 afterLine(writer);
             } else {
@@ -77,7 +77,7 @@ public class DefaultCommand implements Runnable {
                     try {
                         if (isDataLine(line)) {
                             try (final var parser = newParser(bufferProvider, new StringReader(line.strip()))) {
-                                onData(parser, writer, visitorFactory.get());
+                                onData(parser, visitorFactory.get());
                             }
                         } else if (!conf.ndjsonIgnoreUnknownLines()) {
                             writer.write(line);
@@ -111,7 +111,7 @@ public class DefaultCommand implements Runnable {
         }, conf.bufferProviderSize(), bufferProvider, true);
     }
 
-    private void onData(final JsonParser parser, final Writer writer, final JsonVisitor visitor) throws IOException {
+    private void onData(final JsonParser parser,final JsonVisitor visitor) throws IOException {
         while (parser.hasNext()) {
             switch (parser.next()) {
                 case START_ARRAY -> visitor.onStartArray();

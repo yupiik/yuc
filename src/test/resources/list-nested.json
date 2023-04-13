@@ -1,0 +1,42 @@
+[
+  {
+    "a-list": [
+      {
+        "obj": {
+          "nestedliststring": [
+            "a",
+            "b"
+          ],
+          "nestedlistobj": [
+            {
+              "child": true
+            },
+            {
+              "child": false
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "a-list": [
+      {
+        "obj": {
+          "nestedliststring": [
+            "a",
+            "b"
+          ],
+          "nestedlistobj": [
+            {
+              "child": true
+            },
+            {
+              "child": false
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

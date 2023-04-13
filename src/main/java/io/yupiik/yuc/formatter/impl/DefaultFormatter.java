@@ -79,6 +79,7 @@ public class DefaultFormatter implements JsonVisitor {
 
     @Override
     public void onStartArray() {
+        beforeValue();
         output.write(openArray());
         state.add(START_ARRAY);
     }
@@ -87,12 +88,14 @@ public class DefaultFormatter implements JsonVisitor {
     public void onEndArray() {
         output.write(closeArray());
         if (state.removeLast() == IN_ARRAY) {
-            state.removeLast();
+            state.removeLast(); // START_ARRAY
         }
+        updateStateAfterValueIfNeeded();
     }
 
     @Override
     public void onStartObject() {
+        beforeValue();
         output.write(openObject());
         state.add(START_OBJECT);
     }
@@ -101,36 +104,41 @@ public class DefaultFormatter implements JsonVisitor {
     public void onEndObject() {
         output.write(closeObject());
         if (state.removeLast() == IN_OBJECT) {
-            state.removeLast();
+            state.removeLast(); // START_OBJECT
         }
+        updateStateAfterValueIfNeeded();
     }
 
     @Override
     public void onKey(final String name) {
         beforeKey();
-        output.write(key(name) + ": ");
+        output.write(key(name) + ":");
     }
 
     @Override
     public void onString(final String value) {
+        beforeValue();
         output.write(string(value));
         updateStateAfterValueIfNeeded();
     }
 
     @Override
     public void onBoolean(final boolean value) {
+        beforeValue();
         output.write(booleanValue(value));
         updateStateAfterValueIfNeeded();
     }
 
     @Override
     public void onNumber(final String value) {
+        beforeValue();
         output.write(numberValue(value));
         updateStateAfterValueIfNeeded();
     }
 
     @Override
     public void onNull() {
+        beforeValue();
         output.write(nullValue());
         updateStateAfterValueIfNeeded();
     }
@@ -149,10 +157,20 @@ public class DefaultFormatter implements JsonVisitor {
         }
     }
 
+    protected void beforeValue() {
+        if (!state.isEmpty() && state.getLast() == IN_ARRAY) {
+            separator();
+        }
+    }
+
     protected void beforeKey() {
         if (!state.isEmpty() && state.getLast() == IN_OBJECT) {
-            output.write(attributeSeparator() + " ");
+            separator();
         }
+    }
+
+    protected void separator() {
+        output.write(attributeSeparator());
     }
 
     protected enum State {
