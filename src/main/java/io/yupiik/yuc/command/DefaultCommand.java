@@ -79,14 +79,17 @@ public class DefaultCommand implements Runnable {
                             try (final var parser = newParser(bufferProvider, new StringReader(line.strip()))) {
                                 onData(parser, visitorFactory.get());
                             }
+                            writer.flush();
                         } else if (!conf.ndjsonIgnoreUnknownLines()) {
                             writer.write(line);
+                            writer.flush();
                         } else {
                             addEol = true;
                         }
                     } catch (final RuntimeException | IOException e) {
                         if (!conf.ndjsonIgnoreUnknownLines()) {
                             writer.write(line);
+                            writer.flush();
                         }
                     }
                 }
