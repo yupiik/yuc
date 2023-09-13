@@ -15,7 +15,7 @@
  */
 package io.yupiik.yuc.io;
 
-import io.yupiik.fusion.json.internal.JsonStrings;
+import io.yupiik.fusion.json.JsonMapper;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -26,17 +26,21 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toMap;
 
 // todo: improve this part to be a real streaming (not sure it is that relevant in real life)
 public class Xml2JsonReader extends Reader {
     private final Reader delegate;
 
-    public Xml2JsonReader(final Reader xml) {
+    public Xml2JsonReader(final Reader xml, final JsonMapper jsonMapper, final boolean autoList) {
         final var saxParserFactory = SAXParserFactory.newInstance();
         saxParserFactory.setNamespaceAware(true);
         saxParserFactory.setValidating(false);
@@ -47,9 +51,9 @@ public class Xml2JsonReader extends Reader {
 
             final var saxParser = saxParserFactory.newSAXParser();
 
-            final var handler = new Xml2JsonHandler();
+            final var handler = new Xml2JsonHandler(autoList);
             saxParser.parse(new InputSource(xml), handler);
-            delegate = new StringReader(handler.builder.toString());
+            delegate = new StringReader(jsonMapper.toString(handler.object.getLast()));
         } catch (final IOException | ParserConfigurationException | SAXException e) {
             throw new IllegalStateException(e);
         }
@@ -65,39 +69,45 @@ public class Xml2JsonReader extends Reader {
         delegate.close();
     }
 
-    private static class Elt {
-        private final String uri;
-        private final String name;
-        private final String attributes;
-
-        private Elt parent;
-        private int children = 0;
-        private boolean started = false;
-
-        private Elt(final String uri, final String name, final String attributes) {
-            this.uri = uri;
-            this.name = name;
-            this.attributes = attributes;
-        }
-    }
-
     private static class Xml2JsonHandler extends DefaultHandler {
-        private final StringBuilder builder = new StringBuilder();
+        private final boolean autoList;
 
-        private Elt elt = null;
-        private StringBuilder text = null;
+        private StringBuilder text = new StringBuilder();
+        private LinkedList<Map<String, Object>> object = new LinkedList<>();
+
+        private Xml2JsonHandler(final boolean autoList) {
+            this.autoList = autoList;
+        }
 
         @Override
         public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) {
             text = null;
-            if (elt != null) {
-                elt.children++;
+
+            final var xmlAttributes = IntStream.range(0, attributes.getLength())
+                    .boxed()
+                    .collect(toMap(attributes::getQName, attributes::getValue));
+            final var obj = new LinkedHashMap<String, Object>();
+            if (uri != null && !uri.isBlank()) {
+                obj.put("_xml_namespace_", uri);
             }
-            final var newElt = new Elt(uri, localName, attributes.getLength() == 0 ? null : IntStream.range(0, attributes.getLength())
-                    .mapToObj(i -> JsonStrings.escape(attributes.getQName(i)) + ": " + JsonStrings.escape(attributes.getValue(i)))
-                    .collect(joining(", ", "\"_xml_attributes_\": {", "}")));
-            newElt.parent = elt;
-            elt = newElt;
+            if (!xmlAttributes.isEmpty()) {
+                obj.put("_xml_attributes_", xmlAttributes);
+            }
+
+            if (!object.isEmpty()) {
+                object.getLast().compute(localName, (k, v) -> {
+                    if (v != null) {
+                        if (autoList) {
+                            return v instanceof Collection<?> c ?
+                                    Stream.concat(c.stream(), Stream.of(obj)).toList() :
+                                    Stream.of(v, obj).toList();
+                        }
+                        return v;
+                    }
+                    return obj;
+                });
+            }
+            object.add(obj);
         }
 
         @Override
@@ -109,77 +119,35 @@ public class Xml2JsonReader extends Reader {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public void endElement(final String uri, final String localName, final String qName) {
-            try {
-                if (elt.children == 0) {
-                    if (elt.parent != null) {
-                        var current = elt.parent;
-                        final var missing = new ArrayList<Elt>();
-                        while (current != null) {
-                            if (current.started) {
-                                break;
+            final var last = object.size() == 1;
+            final var popped = last ? object.getLast() : object.removeLast();
+            if (text != null) {
+                final var string = text.toString().strip();
+                if (!string.isEmpty()) {
+                    if (popped.isEmpty()) {
+                        object.getLast().compute(localName, (k, v) -> {
+                            if (v instanceof List l) {
+                                l.remove(l.size() - 1);
+                                l.add(string);
+                                return l;
                             }
-                            missing.add(current);
-                            current = current.parent;
-                        }
-                        if (!missing.isEmpty()) {
-                            Collections.reverse(missing);
-                            for (final var e : missing) {
-                                if (e.parent != null) {
-                                    if (e.parent.children > 1) {
-                                        builder.append(',');
-                                    }
-                                    builder.append(JsonStrings.escape(e.name)).append(':');
-                                }
-                                builder.append('{');
-                                appendInternalAttributes(e);
-                                e.started = true;
-                            }
-                        }
-
-                        if (elt.parent.children > 1) {
-                            builder.append(',');
-                        }
-                    }
-
-                    final String value;
-                    if (text == null) {
-                        value = "null";
+                            return string;
+                        });
                     } else {
-                        value = JsonStrings.escape(text.toString().strip());
+                        popped.put("_xml_value_", string);
                     }
-                    if (elt.attributes == null) {
-                        builder.append(JsonStrings.escape(elt.name)).append(": ").append(value);
-                    } else {
-                        builder.append(JsonStrings.escape(elt.name)).append(": {");
-                        appendInternalAttributes(elt);
-                        builder.append(", \"_xml_value_\": ").append(value).append('}');
-                    }
-                    return;
                 }
-
-                if (elt.parent != null && !elt.started) {
-                    builder.append(JsonStrings.escape(elt.name)).append('{');
-                    appendInternalAttributes(elt);
-                    elt.started = true;
-                }
-                builder.append('}');
-            } finally {
-                elt = elt.parent;
+                text = null;
             }
-        }
 
-        private void appendInternalAttributes(final Elt element) {
-            if (element.uri != null && !element.uri.isBlank()) {
-                builder.append("\"_xml_namespace_\": ").append(JsonStrings.escape(element.uri));
-                element.children++;
-            }
-            if (element.attributes != null && !element.attributes.isBlank()) {
-                if (element.children > 1) {
-                    builder.append(", ");
+            // drop empty object == null
+            if (!last && popped.isEmpty()) {
+                final var value = object.getLast().get(localName);
+                if (value instanceof Map<?, ?>) {
+                    object.getLast().put(localName, null);
                 }
-                builder.append(element.attributes);
-                element.children++;
             }
         }
     }

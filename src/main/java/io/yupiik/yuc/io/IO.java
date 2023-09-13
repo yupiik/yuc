@@ -16,6 +16,7 @@
 package io.yupiik.yuc.io;
 
 import io.yupiik.fusion.framework.api.scope.ApplicationScoped;
+import io.yupiik.fusion.json.JsonMapper;
 
 import java.io.BufferedReader;
 import java.io.FilterInputStream;
@@ -33,7 +34,8 @@ import java.nio.file.Path;
 @ApplicationScoped
 public class IO {
     // todo: optimize buffer usages (+ config from CLI - already there anyway, just needs to be propagated)
-    public BufferedReader openInput(final Charset charset, final String value, final int bufferSize) {
+    public BufferedReader openInput(final JsonMapper jsonMapper, final Charset charset,
+                                    final String value, final int bufferSize, final boolean autoList) {
         try {
             final var rawReader = switch (value) {
                 case "&0", "-" -> new InputStreamReader(new FilterInputStream(System.in) {
@@ -48,7 +50,7 @@ public class IO {
             final int first = pushbackReader.read();
             pushbackReader.unread(first);
             if (first == '<') { // assume xml
-                return new BufferedReader(new Xml2JsonReader(pushbackReader));
+                return new BufferedReader(new Xml2JsonReader(pushbackReader, jsonMapper, autoList));
             }
             return new BufferedReader(pushbackReader);
         } catch (final IOException e) {

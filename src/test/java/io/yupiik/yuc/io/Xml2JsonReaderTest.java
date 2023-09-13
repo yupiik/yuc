@@ -153,11 +153,101 @@ class Xml2JsonReaderTest {
                       }
                     }
                   }
-                }""");
+                }""", false);
     }
 
-    private void assertXml2Json(final String xml, final String expectedJson) throws IOException {
-        try (final var in = new BufferedReader(new Xml2JsonReader(new StringReader(xml)));
+    @Test
+    void autoList() throws IOException {
+        assertXml2Json("""
+                <?xml version="1.0" encoding="UTF-8"?>
+                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                 xmlns:rem="http://remote.externalservices.workspaceservices.curam"
+                 xmlns:xsd="http://dom.w3c.org/xsd">
+                   <soapenv:Body>
+                      <rem:create>
+                         <rem:xmlMessage>
+                     <tns:Payments xmlns:tns="http://www.curamsoftware.com/WorkspaceServices/ExternalPayment">
+                        <Payment simple="true" id="123">
+                            <paymentID forceToBeObjectInJson="true">2346</paymentID>
+                            <PaymentBreakdown>
+                                <PaymentLineItem>
+                                    <caseName>I</caseName>
+                                    <caseReferenceNo>J</caseReferenceNo>
+                                    <componentType>C24000</componentType>
+                                    <debitAmount>22.45</debitAmount>
+                                    <creditAmount>49.76</creditAmount>
+                                    <coverPeriodFrom>2012-01-01</coverPeriodFrom>
+                                    <coverPeriodTo>2012-01-01</coverPeriodTo>
+                                </PaymentLineItem>
+                                <PaymentLineItem>
+                                    <caseName>A</caseName>
+                                    <caseReferenceNo>B</caseReferenceNo>
+                                    <componentType>C25000</componentType>
+                                    <debitAmount>22.87</debitAmount>
+                                    <creditAmount>50.76</creditAmount>
+                                    <coverPeriodFrom>2022-01-01</coverPeriodFrom>
+                                    <coverPeriodTo>2023-03-01</coverPeriodTo>
+                                </PaymentLineItem>
+                            </PaymentBreakdown>
+                        </Payment>
+                    </tns:Payments>
+                         </rem:xmlMessage>
+                      </rem:create>
+                   </soapenv:Body>
+                </soapenv:Envelope>""", """
+                {
+                  "_xml_namespace_": "http://schemas.xmlsoap.org/soap/envelope/",
+                  "Body": {
+                    "_xml_namespace_": "http://schemas.xmlsoap.org/soap/envelope/",
+                    "create": {
+                      "_xml_namespace_": "http://remote.externalservices.workspaceservices.curam",
+                      "xmlMessage": {
+                        "_xml_namespace_": "http://remote.externalservices.workspaceservices.curam",
+                        "Payments": {
+                          "_xml_namespace_": "http://www.curamsoftware.com/WorkspaceServices/ExternalPayment",
+                          "Payment": {
+                            "_xml_attributes_": {
+                              "simple": "true",
+                              "id": "123"
+                            },
+                            "paymentID": {
+                              "_xml_attributes_": {
+                                "forceToBeObjectInJson": "true"
+                              },
+                              "_xml_value_": "2346"
+                            },
+                            "PaymentBreakdown": {
+                              "PaymentLineItem": [
+                                {
+                                  "caseName": "I",
+                                  "caseReferenceNo": "J",
+                                  "componentType": "C24000",
+                                  "debitAmount": "22.45",
+                                  "creditAmount": "49.76",
+                                  "coverPeriodFrom": "2012-01-01",
+                                  "coverPeriodTo": "2012-01-01"
+                                },
+                                {
+                                  "caseName": "A",
+                                  "caseReferenceNo": "B",
+                                  "componentType": "C25000",
+                                  "debitAmount": "22.87",
+                                  "creditAmount": "50.76",
+                                  "coverPeriodFrom": "2022-01-01",
+                                  "coverPeriodTo": "2023-03-01"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }""", true);
+    }
+
+    private void assertXml2Json(final String xml, final String expectedJson, final boolean auto) throws IOException {
+        try (final var in = new BufferedReader(new Xml2JsonReader(new StringReader(xml), new JsonMapperImpl(List.of(), c -> Optional.empty()), auto));
              final var jsonMapper = new JsonMapperImpl(List.of(), c -> Optional.empty())) {
             final var json = in.lines().collect(joining("\n"));
             try {
