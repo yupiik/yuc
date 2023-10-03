@@ -79,6 +79,10 @@
 <dd>
 <p>If <code>true</code> an EOL is appended to the output stream. Default: <code>true</code>. Aliases: <code>-ae</code>, <code>-AE</code>.</p>
 </dd>
+<dt class="hdlist1">--auto-list</dt>
+<dd>
+<p>If input is a XML file and some nested tag are duplicated (XML list), replace child by a list to keep a list in JSON. Note that it can lead to cases you have a list or an object (single case) so take care in your template of that detail. Aliases: <code>-al</code>, <code>-AL</code>.</p>
+</dd>
 <dt class="hdlist1">--buffer-provider-size</dt>
 <dd>
 <p>JSON parser buffer provider size. Default: <code>16384</code>. Aliases: <code>-bps</code>, <code>-BPS</code>.</p>
