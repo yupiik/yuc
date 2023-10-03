@@ -279,7 +279,7 @@ under the License.
       <plugin>
         <groupId>io.yupiik.maven</groupId>
         <artifactId>yupiik-tools-maven-plugin</artifactId>
-        <version>1.1.2</version>
+        <version>1.1.8</version>
         <executions>
           <execution>
             <id>force-gen</id>
