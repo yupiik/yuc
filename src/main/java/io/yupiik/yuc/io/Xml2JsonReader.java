@@ -129,9 +129,7 @@ public class Xml2JsonReader extends Reader {
                     if (popped.isEmpty()) {
                         object.getLast().compute(localName, (k, v) -> {
                             if (v instanceof List l) {
-                                l.remove(l.size() - 1);
-                                l.add(string);
-                                return l;
+                                return Stream.concat(l.stream().limit(l.size() - 1), Stream.of(string)).toList();
                             }
                             return string;
                         });
