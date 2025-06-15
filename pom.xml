@@ -29,7 +29,7 @@
   <properties>
     <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <fusion.version>1.0.8</fusion.version>
+    <fusion.version>1.0.25</fusion.version>
   </properties>
 
   <dependencies>
@@ -253,6 +253,7 @@ under the License.
         </executions>
         <configuration>
           <fork>false</fork>
+          <proc>full</proc>
           <parameters>true</parameters>
           <source>${maven.compiler.release}</source>
           <target>${maven.compiler.release}</target>
