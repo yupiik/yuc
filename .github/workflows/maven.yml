@@ -37,7 +37,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: '17.0.6'
+          java-version: '21'
       - name: Build
         run: mvn install -Dm2.location=/home/runner/work/yuc/yuc/.m2
       - name: Remove Snapshots Before Caching
@@ -56,7 +56,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: '17.0.6'
+          java-version: '21'
       - name: Build
         run: mvn install -DskipTests ossindex:audit
       - name: Remove Snapshots Before Caching
