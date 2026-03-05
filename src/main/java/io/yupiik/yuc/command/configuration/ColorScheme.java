@@ -33,7 +33,7 @@ public record ColorScheme(
 ) {
     public static final ColorScheme DEFAULT = new ColorScheme(
             "0", "1;37", "1;37", "1;37",
-            "1;30m", "3;37m", "3;37",
+            "1;30", "3;37", "3;37",
             "1;34", "0;32", "3;37");
     public static final ColorScheme NONE = new ColorScheme(
             "", "", "", "", "", "", "", "", "", "");
