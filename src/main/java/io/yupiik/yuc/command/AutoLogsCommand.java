@@ -155,13 +155,14 @@ public class AutoLogsCommand implements Runnable {
 
     // for now we dont change the level name to respect the app semantic but we could normalize it
     private String formatLevel(final Object level) {
-        return LogColorScheme.PREFIX + switch (level.toString().toLowerCase(Locale.ROOT)) {
-            case "err", "error", "severe" -> conf.colorScheme().error();
+        final var lowerCase = level.toString().toLowerCase(Locale.ROOT);
+        return LogColorScheme.PREFIX + switch (lowerCase) {
+            case "err", "error", "severe", "critical", "alert", "securityalert" -> conf.colorScheme().error();
             case "warn", "warning" -> conf.colorScheme().warning();
             case "info", "information", "infos" -> conf.colorScheme().info();
-            case "fine", "finer", "debug" -> conf.colorScheme().finer();
+            case "fine", "finer", "debug", "verbose" -> conf.colorScheme().finer();
             // finest but will also match config etc..
-            default -> conf.colorScheme().finest();
+            default -> lowerCase.contains("error") ? conf.colorScheme().error() : conf.colorScheme().finest();
         } + 'm' + level + LogColorScheme.PREFIX + conf.colorScheme().reset() + 'm';
     }
 
