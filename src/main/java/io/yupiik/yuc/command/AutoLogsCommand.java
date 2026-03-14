@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import static java.util.Optional.of;
@@ -45,7 +46,9 @@ public class AutoLogsCommand implements Runnable {
             // spark - its log4j config
             new LineAnalyzer("ts", "level", "msg", "exception"),
             // .net default json console formatter (microsoft logging extension)
-            new LineAnalyzer("Timestamp", "LogLevel", "Message", "Exception")
+            new LineAnalyzer("Timestamp", "LogLevel", "Message", "Exception"),
+            // gcsfuse
+            new LineAnalyzer("timestamp", "severity", "message", "exception")
     );
 
     private final Conf conf;
@@ -167,6 +170,12 @@ public class AutoLogsCommand implements Runnable {
     }
 
     private String formatDate(final Object timestamp) {
+        if (timestamp instanceof Map<?,?> map && map.get("seconds") instanceof Number seconds) {
+            if (map.get("nanos") instanceof Number nanos) {
+                return formatDate(TimeUnit.SECONDS.toNanos(seconds.longValue()) + nanos.longValue());
+            }
+            return formatDate(seconds);
+        }
         return timestamp instanceof Number n ? toInstant(n.longValue()).toString() : timestamp.toString() /*assume format is readable*/;
     }
 
