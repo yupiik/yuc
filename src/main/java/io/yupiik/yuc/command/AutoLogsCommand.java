@@ -48,7 +48,9 @@ public class AutoLogsCommand implements Runnable {
             // .net default json console formatter (microsoft logging extension)
             new LineAnalyzer("Timestamp", "LogLevel", "Message", "Exception"),
             // gcsfuse
-            new LineAnalyzer("timestamp", "severity", "message", "exception")
+            new LineAnalyzer("timestamp", "severity", "message", "exception"),
+            // zap
+            new LineAnalyzer("time", "level", "message", "error")
     );
 
     private final Conf conf;
