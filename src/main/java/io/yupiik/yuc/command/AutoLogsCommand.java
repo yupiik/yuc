@@ -50,7 +50,9 @@ public class AutoLogsCommand implements Runnable {
             // gcsfuse
             new LineAnalyzer("timestamp", "severity", "message", "exception"),
             // zap
-            new LineAnalyzer("time", "level", "message", "error")
+            new LineAnalyzer("time", "level", "message", "error"),
+            // logstash
+            new LineAnalyzer("@timestamp", "level", "message", "stack_trace")
     );
 
     private final Conf conf;
