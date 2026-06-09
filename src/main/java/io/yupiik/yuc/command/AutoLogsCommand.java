@@ -42,22 +42,27 @@ import static java.util.stream.Collectors.joining;
 public class AutoLogsCommand implements Runnable {
     private final List<LineAnalyzer> analyzers = List.of(
             // yupiik-logging json
-            new LineAnalyzer("timestamp", "level", "message", "exception"),
+            new LineAnalyzer("timestamp", "level", "message", "exception", null),
             // spark - its log4j config
-            new LineAnalyzer("ts", "level", "msg", "exception"),
+            new LineAnalyzer("ts", "level", "msg", "exception", null),
             // .net default json console formatter (microsoft logging extension)
-            new LineAnalyzer("Timestamp", "LogLevel", "Message", "Exception"),
+            new LineAnalyzer("Timestamp", "LogLevel", "Message", "Exception", null),
             // gcsfuse
-            new LineAnalyzer("timestamp", "severity", "message", "exception"),
+            new LineAnalyzer("timestamp", "severity", "message", "exception", null),
             // zap
-            new LineAnalyzer("time", "level", "message", "error"),
+            new LineAnalyzer("time", "level", "message", "error", null),
+            // kubebuilder
+            new LineAnalyzer("ts", "level", "msg", "error", "stacktrace"),
             // logstash
-            new LineAnalyzer("@timestamp", "level", "message", "stack_trace")
+            new LineAnalyzer("@timestamp", "level", "message", null, "stack_trace")
     );
 
     private final Conf conf;
     private final IO io;
     private final JsonMapper jsonMapper;
+    private LineAnalyzer cachedAnalyzer;
+    private LineAnalyzer lastWinner;
+    private int matchCount;
 
     public AutoLogsCommand(final Conf conf, final IO io, final JsonMapper jsonMapper) {
         this.conf = conf;
@@ -91,37 +96,96 @@ public class AutoLogsCommand implements Runnable {
         }
     }
 
+    private static final int MIN_STREAK = 5;
+
     private Optional<String> format(final Object data) {
         if (!(data instanceof Map<?, ?> map)) {
+            matchCount = 0;
             return Optional.empty();
         }
 
         @SuppressWarnings("unchecked") final var input = (Map<String, Object>) map;
 
-        for (final var analyzer : analyzers) {
-            final var timestamp = analyzer.timestamp().apply(input);
-            if (timestamp == null) {
-                continue;
+        if (cachedAnalyzer != null) {
+            final var ts = cachedAnalyzer.timestamp().apply(input);
+            if (ts != null) {
+                final var lvl = cachedAnalyzer.level().apply(input);
+                if (lvl != null) {
+                    final var msg = cachedAnalyzer.message().apply(input);
+                    if (msg != null) {
+                        return of(format(ts, lvl, msg,
+                                cachedAnalyzer.exception().apply(input),
+                                cachedAnalyzer.stacktrace().apply(input)));
+                    }
+                }
             }
-
-            final var level = analyzer.level().apply(input);
-            if (level == null) {
-                continue;
-            }
-
-            final var message = analyzer.message().apply(input);
-            if (message == null) {
-                continue;
-            }
-
-            return of(format(timestamp, level, message, analyzer.exception().apply(input)));
+            cachedAnalyzer = null;
+            matchCount = 0;
         }
 
-        return Optional.empty();
+        LineAnalyzer best = null;
+        int bestScore = -1;
+        for (final var analyzer : analyzers) {
+            int score = 0;
+            if (analyzer.timestamp().apply(input) != null) {
+                score++;
+            }
+            if (analyzer.level().apply(input) != null) {
+                score++;
+            }
+            if (analyzer.message().apply(input) != null) {
+                score++;
+            }
+            if (analyzer.exception().apply(input) != null) {
+                score++;
+            }
+            if (analyzer.stacktrace().apply(input) != null) {
+                score++;
+            }
+            if (score > bestScore) {
+                bestScore = score;
+                best = analyzer;
+            }
+        }
+        if (best == null || bestScore < 3 ||
+            best.timestamp().apply(input) == null ||
+            best.level().apply(input) == null ||
+            best.message().apply(input) == null) {
+            matchCount = 0;
+            return Optional.empty();
+        }
+
+        if (best == lastWinner) {
+            matchCount++;
+            if (matchCount >= MIN_STREAK) {
+                cachedAnalyzer = best;
+            }
+        } else {
+            lastWinner = best;
+            matchCount = 1;
+        }
+
+        return of(format(
+                best.timestamp().apply(input),
+                best.level().apply(input),
+                best.message().apply(input),
+                best.exception().apply(input),
+                best.stacktrace().apply(input)));
     }
 
-    private String format(final Object timestamp, final Object level, final Object message, final Object exception) {
-        return formatDate(timestamp) + " [" + formatLevel(level) + "] " + message + (exception != null ? formatException(exception) : "");
+    private String format(final Object timestamp, final Object level, final Object message,
+                          final Object exception, final Object stacktrace) {
+        return formatDate(timestamp) + " [" + formatLevel(level) + "] " + message
+                + (exception != null ? formatException(exception) : "")
+                + (stacktrace != null ? formatStacktrace(stacktrace) : "");
+    }
+
+    private String formatStacktrace(final Object stacktrace) {
+        if (stacktrace instanceof String s) {
+            final var v = s.strip();
+            return v.isBlank() ? "" : ('\n' + v);
+        }
+        return formatException(stacktrace);
     }
 
     private String formatException(final Object exception) {
@@ -207,12 +271,17 @@ public class AutoLogsCommand implements Runnable {
             Function<Map<String, Object>, Object> timestamp,
             Function<Map<String, Object>, Object> level,
             Function<Map<String, Object>, Object> message,
-            Function<Map<String, Object>, Object> exception) {
-        private LineAnalyzer(final String timestamp, final String level, final String message, final String exception) {
-            this(read(timestamp), read(level), read(message), read(exception));
+            Function<Map<String, Object>, Object> exception,
+            Function<Map<String, Object>, Object> stacktrace) {
+        private LineAnalyzer(final String timestamp, final String level, final String message,
+                             final String exception, final String stacktrace) {
+            this(read(timestamp), read(level), read(message), read(exception), read(stacktrace));
         }
 
         private static Function<Map<String, Object>, Object> read(final String key) {
+            if (key == null) {
+                return map -> null;
+            }
             return map -> map.get(key);
         }
     }
